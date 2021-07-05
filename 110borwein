@@ -1,0 +1,109 @@
+#!/usr/bin/python3
+
+import sys
+import math
+
+def usage():
+    print("USAGE")
+    print("    ./110borwein n\n")
+    print("DESCRIPTION")
+    print('    n   constant defining the integral to be computed')
+
+
+def try_int(nb):
+    try:
+        int(nb)
+    except ValueError:
+        return False
+    else:
+        return True
+
+
+def rigor():
+    if len(sys.argv) != 2:
+        exit(84)
+    if len(sys.argv) == 2 and sys.argv[1] == "-h":
+        usage()
+        exit (84)
+    if not try_int(sys.argv[1]):
+        exit(84)
+    if int(sys.argv[1]) < 0:
+        exit (84)
+
+
+def integral(x, n):
+    i = 0
+    result = 1
+    while (i <= n):
+        if x != 0:
+            result = result * math.sin(x / (2 * i + 1)) / (x / (2 * i + 1))
+        i = i + 1
+    return result
+
+def simpson_rule(n):
+    i = 0
+    a = 0
+    b = 0
+    h = 0.5
+
+    while i < 10000:
+        a += integral((i * h) + (h / 2), n)
+        i = i + 1
+    i = 1
+    while i < 10000:
+        b += integral((i * h), n)
+        i = i + 1
+    result = ((a * 4) + (b * 2) + integral(0, n) + integral(5000, n)) * (5000 / 60000)
+    diff = (abs(result - (math.pi / 2)))
+    print_function(result, diff, n)
+
+
+def midpoint_rule(n):
+    i = 0
+    y = 0
+    h = 0.5
+    result = 0
+
+    while i < 10000:
+        result = result + (h * integral(y + h / 2, n))
+        i = i + 1
+        y = y + h
+    diff = abs((result - (math.pi / 2)))
+    print_function(result, diff, n)
+
+
+def trapezoidal_rule(n):
+    i = 1
+    result = 0
+    h = 0.5
+
+    while i < 10000:
+        result += integral(i * h, n)
+        i = i + 1
+    result = ((result * 2) + integral(0, n) + integral(5000,n)) * (5000 / 20000)
+    diff = (abs(result - (math.pi / 2)))
+    print_function(result, diff, n)
+
+
+def print_function(valor_one, valor_two, n):
+    print("I", end = '')
+    print(n, end = ' = ')
+    print("%.10f" % valor_one)
+    print("diff", end = ' = ')
+    print("%.10f" % valor_two)
+
+
+def borwein(n):
+    print("Midpoint:")
+    midpoint_rule(n)
+    print("\nTrapezoidal:")
+    trapezoidal_rule(n)
+    print("\nSimpson:")
+    simpson_rule(n)
+
+def main():
+    rigor()
+    borwein(int(sys.argv[1]))
+
+if __name__ == "__main__":
+    main()

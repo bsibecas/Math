@@ -1,0 +1,120 @@
+#!/usr/bin/python3
+
+import sys
+import math
+
+def usage():
+    print("USAGE")
+    print("    ./106bombyx n [k | i0 i1]\n")
+    print("DESCRIPTION")
+    print("    n       number of first generation individuals")
+    print("    k       growth rate from 1 to 4")
+    print("    i0      initial generation (included)")
+    print("    i1      final generation (included)")
+
+
+def try_int(nb):
+    try:
+        int(nb)
+    except ValueError:
+        return False
+    else:
+        return True
+
+
+def try_float(nb):
+    try:
+        float(nb)
+    except ValueError:
+        return False
+    else:
+        return True
+
+
+def verify_int():
+    if not try_int(sys.argv[1]):
+        print("Incorrect type of argument, integer expected")
+        return 84
+    if len(sys.argv) == 4:
+        if not try_int(sys.argv[2]):
+            print("Incorrect type of argument, integer expected")
+            return 84
+        if not try_int(sys.argv[3]):
+            print("Incorrect type of argument, integer expected")
+            return 84
+    return 0
+
+def verify_float():
+    if len(sys.argv) == 3:
+        if not try_float(sys.argv[2]):
+            print("Incorrect type of argument, float expected")
+            return 84
+    return 0
+
+
+def rigor():
+
+    if len(sys.argv) == 2 and sys.argv[1] == "-h":
+        usage()
+        return 84
+    if len(sys.argv) < 3 or len(sys.argv) > 4:
+        print("Incorrect number of arguments")
+        return 84
+    if verify_float() != 0:
+        return 84
+    if verify_int() != 0:
+        return 84
+    if (len(sys.argv)) == 3:
+        if float(sys.argv[2]) < 1 or float(sys.argv[2]) > 4:
+            print("Second argument has to be between 1 and 4")
+            return 84
+        if int(sys.argv[1]) < 0:
+            return 84
+    if (len(sys.argv)) == 4:
+        if int(sys.argv[2]) >= int(sys.argv[3]):
+            print("i0 has to be smaller than i1")
+            return 84
+        if int(sys.argv[2]) <= 0:
+            return 84
+    return 0
+
+def calcWithGrowth (n, k):
+    i = 1
+    while i < 101:
+        print(i, end=" ")
+        print("%.2f" % n)
+        n = k * n * ((1000 - n) / 1000)
+        i = i + 1
+    return n
+
+def calcWithGrowth_two (n, i0, i1):
+    i = 1
+    k = 1
+    while k <= 4:
+        while i < i0:
+            n = (k * n) * ((1000 - n) / 1000)
+            i = i + 1
+        while i <= i1:
+            n = (k * n) * ((1000 - n) / 1000)
+            if n > 0:
+                print("%.2f %.2f" % (k, n))
+            else:
+                print("%.2f 0.00" % k)
+            i = i + 1
+        k = k + 0.01
+        i = 1
+
+def main():
+    error = rigor()
+    if error != 0:
+        exit(84)
+    n = int(sys.argv[1])
+    if len(sys.argv) == 3:
+        k = float(sys.argv[2])
+        calcWithGrowth(n, k)
+    if len(sys.argv) == 4:
+        calcWithGrowth_two(n, int(sys.argv[2]), int(sys.argv[3]))
+    exit(0)
+
+if __name__ == "__main__":
+    main()
